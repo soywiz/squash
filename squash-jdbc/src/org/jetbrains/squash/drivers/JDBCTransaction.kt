@@ -111,7 +111,7 @@ open class JDBCTransaction(override val connection: JDBCConnection) : Transactio
 
     override suspend fun databaseSchema(): DatabaseSchema = JDBCDatabaseSchema(this)
 
-    override fun close() {
+    override suspend fun close() {
         _jdbcTransaction?.close()
     }
 

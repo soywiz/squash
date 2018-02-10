@@ -8,7 +8,7 @@ import org.jetbrains.squash.statements.*
 /**
  * Represents an open [Transaction] on a database
  */
-interface Transaction : AutoCloseable {
+interface Transaction : SuspendAutoCloseable {
     /**
      * Connection for this [Transaction]
      */

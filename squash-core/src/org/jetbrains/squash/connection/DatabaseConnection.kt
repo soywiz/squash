@@ -5,7 +5,7 @@ import org.jetbrains.squash.dialect.*
 /**
  * Represents a connection to a Database with specific [dialect]
  */
-interface DatabaseConnection : AutoCloseable {
+interface DatabaseConnection : SuspendAutoCloseable {
     /**
      * [SQLDialect] for this connection
      */
@@ -22,4 +22,4 @@ interface DatabaseConnection : AutoCloseable {
     fun createTransaction(): Transaction
 }
 
-fun <T> DatabaseConnection.transaction(body: Transaction.() -> T): T = createTransaction().use { it.body() }
+suspend inline fun <T> DatabaseConnection.transaction(body: Transaction.() -> T): T = createTransaction().use { it.body() }

@@ -23,7 +23,7 @@ interface DatabaseTests {
         }
     }
 
-    fun <R> withTransaction(statement: suspend Transaction.() -> R): R = createTransaction().use { runBlocking { statement(it) } }
+    fun <R> withTransaction(statement: suspend Transaction.() -> R): R = runBlocking { createTransaction().use { statement(it) } }
 
     fun List<SQLStatement>.assertSQL(text: () -> String) {
         val sql = joinToString("\n") { it.sql }

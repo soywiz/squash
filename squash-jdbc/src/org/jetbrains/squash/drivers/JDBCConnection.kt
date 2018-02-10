@@ -9,7 +9,7 @@ open class JDBCConnection(override val dialect: SQLDialect, val conversion: JDBC
     override val monitor = JDBCDatabaseConnectionMonitor()
 
     override fun createTransaction(): Transaction = JDBCTransaction(this)
-    override fun close() {}
+    override suspend fun close() {}
 
     constructor(dialect: SQLDialect, conversion: JDBCDataConversion, dataSource: DataSource) : this(dialect, conversion, { dataSource.connection })
 
