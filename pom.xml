@@ -16,6 +16,7 @@
         <module>squash-core</module>
         <module>squash-jdbc</module>
         <module>squash-graph</module>
+        <module>squash-multi</module>
 
         <module>squash-h2</module>
         <module>squash-mysql</module>
