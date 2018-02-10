@@ -14,7 +14,7 @@ interface DatabaseTests {
     fun autoPrimaryKey(table: String, column: String): String
 
     fun createConnection(): DatabaseConnection
-    fun createTransaction(): Transaction = createConnection().createTransaction()
+    suspend fun createTransaction(): Transaction = createConnection().createTransaction()
 
     fun <R> withTables(vararg tables: TableDefinition, statement: suspend Transaction.() -> R): R = withTransaction {
         runBlocking {

@@ -18,7 +18,7 @@ interface DatabaseSchema {
 
     interface SchemaTable {
         val name: String
-        fun columns(): Sequence<SchemaColumn>
+        suspend fun columns(): Sequence<SchemaColumn>
     }
 
     interface SchemaColumn {

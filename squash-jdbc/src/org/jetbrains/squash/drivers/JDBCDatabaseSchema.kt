@@ -21,7 +21,7 @@ open class JDBCDatabaseSchema(final override val transaction: JDBCTransaction) :
     }
 
     class SchemaTable(override val name: String, private val schema: JDBCDatabaseSchema) : DatabaseSchema.SchemaTable {
-        override fun columns(): Sequence<DatabaseSchema.SchemaColumn> {
+        override suspend fun columns(): Sequence<DatabaseSchema.SchemaColumn> {
             val resultSet = schema.metadata.getColumns(schema.catalogue, schema.currentSchema(), name, null)
             val response = JDBCResponse(schema.transaction.connection.conversion, resultSet)
             return response.rows.map {

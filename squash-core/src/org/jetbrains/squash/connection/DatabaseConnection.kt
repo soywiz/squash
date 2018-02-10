@@ -19,7 +19,7 @@ interface DatabaseConnection : SuspendAutoCloseable {
     /**
      * Creates a [Transaction]
      */
-    fun createTransaction(): Transaction
+    suspend fun createTransaction(): Transaction
 }
 
 suspend inline fun <T> DatabaseConnection.transaction(body: Transaction.() -> T): T = createTransaction().use { it.body() }

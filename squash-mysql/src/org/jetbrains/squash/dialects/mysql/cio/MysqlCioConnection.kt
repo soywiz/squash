@@ -10,16 +10,13 @@ import org.jetbrains.squash.drivers.*
 import org.jetbrains.squash.results.*
 import org.jetbrains.squash.schema.*
 import org.jetbrains.squash.statements.*
-import org.jetbrains.squash.statements.Statement
-import java.sql.*
 import java.util.*
-import java.util.Date
 import kotlin.reflect.*
 
 class MysqlCioConnection(val mysql: Mysql) : DatabaseConnection {
     override val dialect: MySqlDialect = MySqlDialect
     override val monitor: MysqlCioConnectionMonitor = MysqlCioConnectionMonitor()
-    override fun createTransaction(): Transaction = MysqlCioTransaction(this)
+    override suspend fun createTransaction(): Transaction = MysqlCioTransaction(this).start()
     override suspend fun close(): Unit = run { mysql.close() }
 }
 
@@ -103,15 +100,22 @@ class MysqlCioTransaction(override val connection: MysqlCioConnection) : Transac
         return result
     }
 
+    suspend fun start() = this.apply {
+        mysql.query("START TRANSACTION;")
+        //println("WARNING: MysqlCioTransaction.start not implemented!")
+    }
+
     override suspend fun commit() {
-        println("WARNING: MysqlCioTransaction.commit not implemented!")
+        mysql.query("COMMIT;")
+        //println("WARNING: MysqlCioTransaction.commit not implemented!")
     }
 
     override suspend fun rollback() {
-        println("WARNING: MysqlCioTransaction.rollback not implemented!")
+        //println("WARNING: MysqlCioTransaction.rollback not implemented!")
+        mysql.query("ROLLBACK;")
     }
 
-    override suspend fun databaseSchema(): DatabaseSchema = MysqlCioDatabaseSchema()
+    override suspend fun databaseSchema(): DatabaseSchema = MysqlCioDatabaseSchema(this)
 
     override fun createBlob(bytes: ByteArray): BinaryObject = JDBCBinaryObject(bytes)
 
@@ -120,21 +124,29 @@ class MysqlCioTransaction(override val connection: MysqlCioConnection) : Transac
     }
 }
 
-class MysqlCioDatabaseSchema : DatabaseSchema {
-    suspend override fun tables(): Sequence<DatabaseSchema.SchemaTable> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+open class MysqlCioDatabaseSchema(final override val transaction: MysqlCioTransaction) :
+    DatabaseSchemaBase(transaction) {
+    val mysql get() = transaction.mysql
+    override suspend fun tables(): Sequence<DatabaseSchema.SchemaTable> {
+        return mysql.query("SHOW TABLES;").toList().map { MysqlSchemaTable(it.string(0) ?: "", this) }.asSequence()
     }
 
-    suspend override fun create(tables: List<TableDefinition>) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    class MysqlSchemaTable(override val name: String, private val schema: MysqlCioDatabaseSchema) :
+        DatabaseSchema.SchemaTable {
+        val mysql get() = schema.mysql
 
-    suspend override fun createStatements(tables: List<TableDefinition>): List<SQLStatement> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+        override suspend fun columns(): Sequence<DatabaseSchema.SchemaColumn> {
+            //show columns from mytable;
+            return mysql.query("SHOW COLUMNS FROM ${name.mysqlTableQuote()};").toList().map {
+                MysqlSchemaColumn(it.string("Field")!!, it.string("Null") == "YES")
+            }.asSequence()
+        }
 
-    suspend override fun validate(tables: List<Table>): List<DatabaseSchema.DatabaseSchemaValidationItem> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+        class MysqlSchemaColumn(override val name: String, override val nullable: Boolean) :
+            DatabaseSchema.SchemaColumn {
+            override fun toString(): String = "[MYSQL] Column: $name"
+        }
 
+        override fun toString(): String = "[MYSQL] Table: $name"
+    }
 }
