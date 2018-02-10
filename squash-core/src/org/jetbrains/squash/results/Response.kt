@@ -9,5 +9,17 @@ interface Response : Sequence<ResultRow> {
             val sequence = emptySequence<ResultRow>()
             override fun iterator(): Iterator<ResultRow> = sequence.iterator()
         }
+
+        //operator fun invoke(list: List<ResultRow>): Response {
+        //    return object : Response {
+        //        override fun iterator(): Iterator<ResultRow> = list.iterator()
+        //    }
+        //}
+    }
+}
+
+fun Response(list: List<ResultRow>): Response {
+    return object : Response {
+        override fun iterator(): Iterator<ResultRow> = list.iterator()
     }
 }

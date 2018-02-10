@@ -17,7 +17,9 @@ interface Transaction : AutoCloseable {
     /**
      * Executes [sql] on this [Transaction] and returns a [Response]
      */
-    suspend fun executeStatement(sql: String): Response
+    suspend fun executeStatement(sql: String): Response {
+        return executeStatement(SQLStatement(sql, emptyList()))
+    }
 
     /**
      * Executes an SQL [statement] with arguments on this [Transaction] and returns a [Response]
