@@ -35,7 +35,7 @@
         <dependency>
             <groupId>com.soywiz.io.ktor</groupId>
             <artifactId>ktor-client-cio-mysql</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${soywizcioclients.version}</version>
         </dependency>
 
         <!-- TEST -->
