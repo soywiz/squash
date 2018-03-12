@@ -8,8 +8,9 @@
     <version>0.2.5-SNAPSHOT</version>
 
     <properties>
-        <kotlin.version>1.2.21</kotlin.version>
+        <kotlin.version>1.2.30</kotlin.version>
         <dokka.version>0.9.15</dokka.version>
+        <soywizcioclients.version>0.0.1</soywizcioclients.version>
     </properties>
 
     <modules>
@@ -232,6 +233,11 @@
             <id>bintray-ktor</id>
             <name>bintray-ktor</name>
             <url>https://dl.bintray.com/kotlin/ktor</url>
+        </repository>
+        <repository>
+            <id>soywiz</id>
+            <name>soywiz</name>
+            <url>https://dl.bintray.com/soywiz/soywiz</url>
         </repository>
     </repositories>
     <pluginRepositories>
