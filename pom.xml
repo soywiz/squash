@@ -5,7 +5,7 @@
     <groupId>org.jetbrains.squash</groupId>
     <artifactId>squash</artifactId>
     <packaging>pom</packaging>
-    <version>0.2.5-SNAPSHOT</version>
+    <version>0.0.3-CIO</version>
 
     <properties>
         <kotlin.version>1.2.31</kotlin.version>
@@ -145,8 +145,8 @@
                             <goal>publish</goal>
                         </goals>
                         <configuration>
-                            <id>bintray</id>
-                            <url>https://api.bintray.com/maven/kotlin/squash/squash</url>
+                            <id>soywiz-bintray</id>
+                            <url>https://api.bintray.com/maven/soywiz/soywiz/squash</url>
                         </configuration>
                     </execution>
                 </executions>
@@ -209,8 +209,8 @@
 
     <distributionManagement>
         <repository>
-            <id>bintray</id>
-            <url>https://api.bintray.com/maven/kotlin/squash/squash</url>
+            <id>soywiz-bintray</id>
+            <url>https://api.bintray.com/maven/soywiz/soywiz/squash</url>
         </repository>
     </distributionManagement>
 
