@@ -5,7 +5,7 @@ import org.jetbrains.squash.drivers.*
 import java.sql.*
 
 class SqLiteConnection(connector: () -> Connection) : JDBCConnection(SqLiteDialect, SqLiteDataConversion(), connector) {
-    override fun createTransaction(): Transaction = SqLiteTransaction(this)
+    override suspend fun createTransaction(): Transaction = SqLiteTransaction(this)
 
     companion object {
         fun create(url: String, user: String = "", password: String = ""): DatabaseConnection {

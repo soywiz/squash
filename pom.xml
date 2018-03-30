@@ -8,9 +8,9 @@
     <version>0.2.5-SNAPSHOT</version>
 
     <properties>
-        <kotlin.version>1.2.30</kotlin.version>
+        <kotlin.version>1.2.31</kotlin.version>
         <dokka.version>0.9.15</dokka.version>
-        <soywizcioclients.version>0.0.1</soywizcioclients.version>
+        <soywizcioclients.version>0.0.3</soywizcioclients.version>
     </properties>
 
     <modules>
@@ -23,6 +23,9 @@
         <module>squash-mysql</module>
         <module>squash-postgres</module>
         <module>squash-sqlite</module>
+
+        <module>squash-mysql-cio</module>
+        <module>squash-postgres-cio</module>
 
         <module>squash-benchmarks</module>
 

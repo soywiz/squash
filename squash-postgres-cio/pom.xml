@@ -7,7 +7,7 @@
         <version>0.2.5-SNAPSHOT</version>
     </parent>
 
-    <artifactId>squash-mysql</artifactId>
+    <artifactId>squash-postgres-cio</artifactId>
 
     <dependencies>
         <dependency>
@@ -17,37 +17,9 @@
         </dependency>
         <dependency>
             <groupId>org.jetbrains.squash</groupId>
-            <artifactId>squash-jdbc</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.squash</groupId>
             <artifactId>squash-graph</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-        <!-- ENGINE -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.39</version>
-        </dependency>
-        <!-- TEST -->
-<!--
-        <dependency>
-            <groupId>ch.vorburger.mariaDB4j</groupId>
-            <artifactId>mariaDB4j</artifactId>
-            <version>2.2.3</version>
-            <scope>test</scope>
-        </dependency>
--->
-        <dependency>
-            <groupId>com.wix</groupId>
-            <artifactId>wix-embedded-mysql</artifactId>
-            <version>2.1.4</version>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>org.jetbrains.squash</groupId>
             <artifactId>squash-core</artifactId>
@@ -62,21 +34,12 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
-    </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+        <dependency>
+            <groupId>com.soywiz.io.ktor</groupId>
+            <artifactId>ktor-client-cio-postgre</artifactId>
+            <version>${soywizcioclients.version}</version>
+        </dependency>
+
+    </dependencies>
 </project>

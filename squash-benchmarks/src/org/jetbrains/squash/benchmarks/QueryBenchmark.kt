@@ -1,5 +1,6 @@
 package org.jetbrains.squash.benchmarks
 
+import kotlinx.coroutines.experimental.*
 import org.jetbrains.squash.connection.*
 import org.jetbrains.squash.definition.*
 import org.jetbrains.squash.drivers.*
@@ -29,7 +30,7 @@ abstract class QueryBenchmark {
     abstract fun createTransaction(): Transaction
 
     @Setup
-    fun setup() {
+    fun setup(): Unit = runBlocking {
         transaction = createTransaction().apply {
             connection.monitor.before {
                 //println(it)
@@ -46,7 +47,7 @@ abstract class QueryBenchmark {
 
 
     @TearDown
-    fun teardown() {
+    fun teardown(): Unit = runBlocking {
         transaction.close()
     }
 
@@ -84,18 +85,25 @@ abstract class QueryBenchmark {
 
     @Benchmark
     fun iterateQuery() = with(transaction) {
-        from(LoadTable).select(LoadTable.name, LoadTable.value).execute().sumBy { it.columnValue(LoadTable.value) }
+        runBlocking {
+            from(LoadTable).select(LoadTable.name, LoadTable.value).execute().sumBy { it.columnValue(LoadTable.value) }
+        }
     }
 
     @Benchmark
     fun iterateQueryWhere() = with(transaction) {
-        from(LoadTable).select(LoadTable.name, LoadTable.value).where { LoadTable.value gt (rows / 2) }.execute().sumBy { it.columnValue(LoadTable.value) }
+        runBlocking {
+            from(LoadTable).select(LoadTable.name, LoadTable.value).where { LoadTable.value gt (rows / 2) }.execute()
+                .sumBy { it.columnValue(LoadTable.value) }
+        }
     }
 
     @Benchmark
     fun iterateMapping() = with(transaction) {
-        from(LoadTable).select(LoadTable.name, LoadTable.value).bind<Load>(LoadTable)
+        runBlocking {
+            from(LoadTable).select(LoadTable.name, LoadTable.value).bind<Load>(LoadTable)
                 .execute().sumBy { it.value }
+        }
     }
 }
 

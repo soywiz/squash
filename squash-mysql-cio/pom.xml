@@ -7,17 +7,12 @@
         <version>0.2.5-SNAPSHOT</version>
     </parent>
 
-    <artifactId>squash-mysql</artifactId>
+    <artifactId>squash-mysql-cio</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.squash</groupId>
             <artifactId>squash-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.squash</groupId>
-            <artifactId>squash-jdbc</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -28,24 +23,9 @@
 
         <!-- ENGINE -->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.39</version>
-        </dependency>
-        <!-- TEST -->
-<!--
-        <dependency>
-            <groupId>ch.vorburger.mariaDB4j</groupId>
-            <artifactId>mariaDB4j</artifactId>
-            <version>2.2.3</version>
-            <scope>test</scope>
-        </dependency>
--->
-        <dependency>
-            <groupId>com.wix</groupId>
-            <artifactId>wix-embedded-mysql</artifactId>
-            <version>2.1.4</version>
-            <scope>test</scope>
+            <groupId>com.soywiz.io.ktor</groupId>
+            <artifactId>ktor-client-cio-mysql</artifactId>
+            <version>${soywizcioclients.version}</version>
         </dependency>
 
         <dependency>

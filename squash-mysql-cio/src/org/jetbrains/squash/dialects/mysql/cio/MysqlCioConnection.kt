@@ -5,8 +5,7 @@ import com.soywiz.io.ktor.client.util.*
 import org.jetbrains.squash.connection.*
 import org.jetbrains.squash.definition.*
 import org.jetbrains.squash.dialect.*
-import org.jetbrains.squash.dialects.mysql.*
-import org.jetbrains.squash.drivers.*
+import org.jetbrains.squash.query.*
 import org.jetbrains.squash.results.*
 import org.jetbrains.squash.schema.*
 import org.jetbrains.squash.statements.*
@@ -14,7 +13,8 @@ import java.util.*
 import kotlin.reflect.*
 
 class MysqlCioConnection(val mysql: Mysql) : DatabaseConnection {
-    override val dialect: MySqlDialect = MySqlDialect
+    override val dialect: MySqlDialect =
+        MySqlDialect
     override val monitor: MysqlCioConnectionMonitor = MysqlCioConnectionMonitor()
     override suspend fun createTransaction(): Transaction = MysqlCioTransaction(this).start()
     override suspend fun close(): Unit = run { mysql.close() }
@@ -117,11 +117,15 @@ class MysqlCioTransaction(override val connection: MysqlCioConnection) : Transac
 
     override suspend fun databaseSchema(): DatabaseSchema = MysqlCioDatabaseSchema(this)
 
-    override fun createBlob(bytes: ByteArray): BinaryObject = JDBCBinaryObject(bytes)
+    override fun createBlob(bytes: ByteArray): BinaryObject = MysqlBinaryObject(bytes)
 
     override suspend fun close() {
         commit()
     }
+}
+
+class MysqlBinaryObject(override val bytes: ByteArray) : BinaryObject {
+    override fun toString(): String = "BLOB(${bytes.size}"
 }
 
 open class MysqlCioDatabaseSchema(final override val transaction: MysqlCioTransaction) :
@@ -148,5 +152,42 @@ open class MysqlCioDatabaseSchema(final override val transaction: MysqlCioTransa
         }
 
         override fun toString(): String = "[MYSQL] Table: $name"
+    }
+}
+
+object MySqlDialect : BaseSQLDialect("MySQL") {
+    override fun idSQL(name: Name): String {
+        val id = name.id
+        return if (isSqlIdentifier(id)) id else "`$id`"
+    }
+
+    private val mysqlKeywords = setOf("LONG")
+    override fun isSqlIdentifier(id: String): Boolean {
+        if (id.toUpperCase() in mysqlKeywords) return false
+        return super.isSqlIdentifier(id)
+    }
+
+    override fun appendOrderExpression(builder: SQLStatementBuilder, order: QueryOrder) {
+        // NULLS LAST
+        builder.append("ISNULL(")
+        appendExpression(builder, order.expression)
+        builder.append("), ")
+
+        // Main order
+        appendExpression(builder, order.expression)
+        when (order) {
+            is QueryOrder.Ascending -> { /* ASC is default */
+            }
+            is QueryOrder.Descending -> builder.append(" DESC")
+        }
+    }
+
+    override val definition: DefinitionSQLDialect = object : BaseDefinitionSQLDialect(this) {
+        override fun columnTypeSQL(builder: SQLStatementBuilder, type: ColumnType): Unit {
+            when (type) {
+                is UUIDColumnType -> builder.append("BINARY(16)")
+                else -> super.columnTypeSQL(builder, type)
+            }
+        }
     }
 }
